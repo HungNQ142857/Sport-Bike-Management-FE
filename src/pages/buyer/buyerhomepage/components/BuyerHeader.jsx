@@ -1,6 +1,17 @@
 import { FaBicycle, FaSearch, FaShoppingCart } from "react-icons/fa";
+import { useState } from "react";
+import { useNavigate } from "react-router-dom";
+import { clearSessionUser, getSessionUser } from "../../../../services/mockAuth";
 
 export default function BuyerHeader({ containerClass, query, setQuery, scrollTo }) {
+  const navigate = useNavigate();
+  const [sessionUser, setSessionUser] = useState(() => getSessionUser());
+
+  const handleLogout = () => {
+    clearSessionUser();
+    setSessionUser(null);
+  };
+
   return (
     <header className="sticky top-0 z-20 border-b border-slate-200 bg-white/95 backdrop-blur">
       <div className={`${containerClass} flex items-center gap-3 py-3 md:gap-6`}>
@@ -42,12 +53,28 @@ export default function BuyerHeader({ containerClass, query, setQuery, scrollTo 
           Giỏ hàng
         </button>
 
-        <button
-          type="button"
-          className="rounded-full bg-slate-900 px-4 py-2 text-sm font-semibold text-white transition hover:bg-slate-700"
-        >
-          Đăng nhập
-        </button>
+        {sessionUser ? (
+          <div className="flex items-center gap-2">
+            <span className="hidden rounded-full bg-cyan-50 px-3 py-2 text-sm font-semibold text-cyan-700 md:inline">
+              {sessionUser.fullName}
+            </span>
+            <button
+              type="button"
+              onClick={handleLogout}
+              className="rounded-full border border-slate-300 px-4 py-2 text-sm font-semibold text-slate-700 transition hover:bg-slate-100"
+            >
+              Đăng xuất
+            </button>
+          </div>
+        ) : (
+          <button
+            type="button"
+            onClick={() => navigate("/login")}
+            className="rounded-full bg-slate-900 px-4 py-2 text-sm font-semibold text-white transition hover:bg-slate-700"
+          >
+            Đăng nhập
+          </button>
+        )}
       </div>
     </header>
   );
